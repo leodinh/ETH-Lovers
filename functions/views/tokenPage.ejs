@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ./head %>
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <% include ./header %>
+    <div class="container body-content">
+        <h2>Top Token Activity</h2>
+        <div class="p-5 bg-white rounded shadow mb-5">
+            <!-- Rounded tabs -->
+            <ul id="token-tab" role="tablist"
+                class="nav nav-tabs nav-pills flex-column flex-sm-row text-center bg-light border-0 rounded-nav">
+                <li class="nav-item flex-sm-fill active">
+                    <a id="cap-tab" data-toggle="tab" href="#capital" role="tab" aria-controls="capital" aria-selected="true"
+                        class="nav-link border-0 text-uppercase font-weight-bold active">By Capitalization</a>
+                </li>
+                <li class="nav-item flex-sm-fill">
+                    <a id="trade-tab" data-toggle="tab" href="#trade" role="tab" aria-controls="trade"
+                        aria-selected="false" class="nav-link border-0 text-uppercase font-weight-bold">Profile</a>
+                </li>
+                <li class="nav-item flex-sm-fill">
+                    <a id="operations-tab" data-toggle="tab" href="#operations" role="tab" aria-controls="operations"
+                        aria-selected="false" class="nav-link border-0 text-uppercase font-weight-bold">Contact</a>
+                </li>
+            </ul>
+            <div id="token-content" class="tab-content">
+                <div id="capital" role="tabpanel" aria-labelledby="cap-tab" class="tab-pane fade px-4 py-5 show in active">
+                    <table id="by-cap">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Token</th>
+                                <th scope="col">Cap</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">24h</th>
+                                <th scope="col">7d</th>
+                                <th scope="col">30d</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="trade" role="tabpanel" aria-labelledby="trade-tab" class="tab-pane fade px-4 py-5">
+                    <table id="by-trade">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Token</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Volume</th>
+                                <th scope="col">24h</th>
+                                <th scope="col">7d</th>
+                                <th scope="col">30d</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="operations" role="tabpanel" aria-labelledby="operations-tab" class="tab-pane fade px-4 py-5">
+                    <table id="by-operations">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Token</th>
+                                <th scope="col">Operations(24h)</th>
+                                <th scope="col">24h</th>
+                                <th scope="col">7d</th>
+                                <th scope="col">30d</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- End rounded tabs -->
+        </div>
+    </div>
+    <% include footer %>
+    <% include takeNote %>
+    <% include script %>
+    <script src="javascriptClient/tableToken.js"></script>
+    <script src="javascriptClient/checkLogin.js"></script>
+</body>
+
+</html>

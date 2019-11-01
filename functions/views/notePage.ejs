@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include head%>
+    <title>Note</title>
+    <link href="http://fonts.googleapis.com/css?
+family=Reenie+Beanie:regular" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <% include ./header %>
+    <div class="container body-content box-paginacao" id="note-page">
+        <div id="no-user">
+            <img src="../images/warning.gif" alt="warning">
+            <h1>You have to log in to take note</h1>
+        </div>
+        <div class="box-vitrines">
+            <ul id="note-content">
+                <img src="../images/eth-loading.gif"
+                    alt="" id="loading">
+            </ul>
+            <div class="btn-paginacao">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <span id="number-of-notes" style="display:none"></span>
+    <div id="template" style="display:none">
+        <li>
+            <a class="note">
+                <h2 class="time">Time</h2>
+                <p class="content">Text Content #1</p>
+            </a>
+        </li>
+    </div>
+
+    <% include footer %>
+    <% include takeNote %>
+    <% include script %>
+    <script src="javascriptClient/checkLogin.js"></script>
+    <script src="javascriptClient/takenote.js"></script>
+    <script>
+        let numberOfNotes = 0;
+        let dataNote = []
+        let dataId = []
+        var $loading = $('#loading').hide();
+        $(document)
+            .ajaxStart(function () {
+                $loading.show();
+            })
+            .ajaxStop(function () {
+                $loading.hide();
+            });
+        var templateNote = $("#template")
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                $.get({
+                    url: "/notes/get",
+                    data: {
+                        userEmail: $('#user-email').text()
+                    },
+                    success: function (response) {
+                        let data = response.data
+                        let idArray = response.id
+                        console.log(data);
+                        numberOfNotes = data.length;
+                        pagination(data, idArray)
+
+                        $(document).on('click', '.note', noteDetail)
+                    }
+                });
+            } else {
+                $('#no-user').show();
+            }
+        })
+
+        function pagination(data, id) {
+            numberOfNotes = data.length
+            let numberOfPages = Math.ceil(numberOfNotes / 12);
+            $('#number-of-notes').text(numberOfNotes)
+            for (let i = 0; i < numberOfPages; i++) {
+                $('#note-page').prepend(
+                    `<input type="radio" name="input-paginacao" id="paginacao${i+1}" style="display:none" ${i==0?'checked':''}>`
+                )
+                $('#note-page .btn-paginacao ul').append(`<li><label for="paginacao${i+1}">${i+1}</label></li>`)
+                $('.box-vitrines #note-content').append(`<div class="vitrine${i+1}"></div>`)
+            }
+
+            data.forEach(function (item, index) {
+                templateNote.find('.time').parent().attr('data-id', id[
+                    index])
+                templateNote.find('.time').parent().attr("id", "note" + index)
+                templateNote.find('.time').text(datetimeFormat(item
+                    .Time))
+                templateNote.find('.content').text(item.Note)
+                if (numberOfPages > 0) {
+                    let i = Math.ceil((index + 1) / 12)
+                    $(`.vitrine${i}`).append(templateNote.html())
+                } else {
+                    $("#note-content").append(templateNote.html())
+                }
+            })
+
+        }
+        async function noteDetail(event) {
+            event.preventDefault();
+            if ($(event.target).is("a")) {
+                var itemId = parseInt($(event.target).attr('id').split('note')[1]);
+            } else {
+                var itemId = parseInt($(event.target).parent().attr('id').split('note')[1]);
+            }
+            let content = $(`#note${itemId} .content`).text()
+            let time = $(`#note${itemId} .time`).text()
+            let noteId = $(`#note${itemId}`).data('id')
+            console.log(time);
+
+            console.log(noteId);
+
+            console.log($(event.target));
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            })
+            swalWithBootstrapButtons.fire({
+                title: time,
+                input: 'textarea',
+                inputValue: content,
+                inputPlaceholder: 'Type your message here...',
+                inputAttributes: {
+                    'aria-label': 'Type your message here'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Update',
+                cancelButtonText: 'Delete'
+            }).then((result) => {
+                if (result.value) {
+                    if (result.value !== content) {
+                        $.ajax({
+                            url: '/notes/update',
+                            type: 'PUT',
+                            data: {
+                                userEmail: $('#user-email').text(),
+                                content: result.value,
+                                noteId: noteId
+                            },
+                            success: function (res) {
+                                if (res.result == "success") {
+                                    $(`#note${itemId} .content`).text(result.value)
+                                }
+
+                            }
+                        });
+                    }
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    console.log("hello");
+
+                    $.ajax({
+                        url: '/notes/delete',
+                        type: 'DELETE',
+                        data: {
+                            userEmail: $('#user-email').text(),
+                            noteId: noteId
+                        },
+                        success: function (res) {
+                            console.log(result);
+                            if (res.result == "success") {
+                                $(`#note${itemId}`).remove();
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
+        function dynamicSort(property) {
+            var sortOrder = 1;
+            if (property[0] === "-") {
+                sortOrder = -1;
+                property = property.substr(1);
+            }
+            return function (a, b) {
+                /* next line works with strings and numbers, 
+                 * and you may want to customize it to your needs
+                 */
+                var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+                return result * sortOrder;
+            }
+        }
+
+        function pad2Digit(num) {
+            return ('0' + num.toString()).slice(-2);
+        }
+
+        function datetimeFormat(timestamp) {
+            var dateObj = new Date(timestamp);
+            var en_month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return dateObj.getDate() + ' ' + en_month[dateObj.getMonth()] + ' ' + pad2Digit(dateObj.getFullYear()) +
+                ' ' +
+                pad2Digit(dateObj.getHours()) + ':' + pad2Digit(dateObj.getMinutes());
+        }
+    </script>
+</body>
+
+</html>

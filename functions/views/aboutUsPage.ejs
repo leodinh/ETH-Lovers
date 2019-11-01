@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include head%>
+    <title>Abous Us</title>
+    <style>
+        h2 {
+            font-weight: 700;
+        }
+
+        h2:after {
+            content: "";
+            display: block;
+            margin: 0 auto;
+            width: 50%;
+            padding-top: 20px;
+            border-bottom: 1px solid black;
+        }
+
+        h3:after {
+            content: "";
+            display: block;
+            margin: 0 auto;
+            width: 10%;
+            padding-top: 20px;
+            border-bottom: 5px solid #ecff51;
+        }
+
+        .body-content {
+            text-align: center;
+        }
+
+        .intro-content {
+            text-align: start;
+            margin: 0 auto;
+        }
+
+        .intro-content img {
+            width: 300px;
+            height: 300px
+        }
+
+        .intro-content p {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <% include header%>
+    <div class="body-content container">
+        <h2>Who Are We ?</h2>
+        <h3>Nguyen Anh Tuan Dinh</h3>
+        <div class="row intro-content">
+            <div class="col-lg-4">
+                <img src="../images/owner.jpg" alt="anhtuan" class="img-thumbnail">
+            </div>
+            <div class="col-lg-7">
+                <p>I'm currently learning Block Chain Development at George Brown College. I got Bachelor's Degree in
+                    Computer Science from HCM University of Technology. I had been working as Java Developer at Viettel
+                    Company in Vietnam for 6 months before deciding to learn and dive into BlockChain Development in
+                    George Brown College. BlockChain is a cutting-edge technology and may be revolutionise our lives in
+                    the future. I am so eager to figure out what I can do in this area.</p>
+            </div>
+        </div>
+        <h3>Lobsang Tenzin</h3>
+        <div class="row intro-content">
+            <div class="col-lg-4">
+                <img src="../images/lobsang.jpeg" alt="lobsang" class="img-thumbnail">
+            </div>
+            <div class="col-lg-7">
+                <p>Currently at George Brown studying Blockchain Development. I have travelled when I was 17-18 years
+                    old for 1-2 years (2015-2017) to countries in Asia and gained multicultural experience</p>
+            </div>
+        </div>
+    </div>
+    <% include footer%>
+    <% include takeNote %>
+    <% include script %>
+    <script src="javascriptClient/checkLogin.js"></script>
+    <script src="javascriptClient/takenote.js"></script>
+</body>
+
+</html>
